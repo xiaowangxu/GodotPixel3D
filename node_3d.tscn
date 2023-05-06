@@ -171,17 +171,18 @@ shader = ExtResource("2_oay2t")
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_salip")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
-directional_shadow_mode = 1
-directional_shadow_split_1 = 0.004
-directional_shadow_pancake_size = 0.0
-
 [node name="Node3D2" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.587785, 0.809017, 0, -0.809017, 0.587785, 0, 0, 0)
 
 [node name="Scene" parent="Node3D2" instance=ExtResource("1_52faq")]
 unique_name_in_owner = true
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Node3D2/Scene"]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0.404509, -0.31287, 0.859352, -0.293893, 0.845347, 0.446111, 0, 0, 0)
+shadow_enabled = true
+directional_shadow_mode = 0
+directional_shadow_split_1 = 0.004
+directional_shadow_pancake_size = 0.0
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Node3D2/Scene"]
 autoplay = "new_animation"
@@ -190,8 +191,10 @@ libraries = {
 }
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0.434834, 1.8224, -0.301179)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0.434834, 4.33315, -0.301179)
 projection = 1
+near = 0.001
+far = 10.0
 script = ExtResource("1_rkmsp")
 position_proxy = Vector3(-0.298043, 1.0363, 0.152736)
 
@@ -206,3 +209,7 @@ libraries = {
 extra_cull_margin = 16384.0
 mesh = SubResource("QuadMesh_lhcqu")
 surface_material_override/0 = SubResource("ShaderMaterial_0g253")
+
+[node name="RayCast3D" type="RayCast3D" parent="Camera3D"]
+target_position = Vector3(0, 0, -10)
+debug_shape_custom_color = Color(0, 1, 1, 1)

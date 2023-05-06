@@ -232,8 +232,10 @@ shader_parameter/border_width = 0.01
 albedo_color = Color(0, 0, 1, 1)
 
 [sub_resource type="SphereMesh" id="SphereMesh_qdtqc"]
+radial_segments = 16
+rings = 8
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lwgik"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rmpab"]
 albedo_color = Color(0, 0.615686, 0, 1)
 
 [sub_resource type="TextMesh" id="TextMesh_mc6dr"]
@@ -249,6 +251,7 @@ roughness = 0.0
 [node name="Node3D" type="Node3D"]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(18.4924, 0, 0, 0, 1, 0, 0, 0, 19.8235, 0, 0, 0)
 mesh = SubResource("PlaneMesh_6cgi7")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_s36p4")
@@ -305,7 +308,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_j16gv")
 transform = Transform3D(0.307902, 0, 0.0440075, 0, 0.311032, 0, -0.0440075, 0, 0.307902, -0.612656, 0.056973, 0.270202)
 mesh = SubResource("SphereMesh_qdtqc")
 skeleton = NodePath("../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_lwgik")
+surface_material_override/0 = SubResource("StandardMaterial3D_rmpab")
 
 [node name="MeshInstance3D5" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.963574, -0.26744, 0, 0.152444, 0.549248, 0.821637, -0.219739, -0.791708, 0.570011, -0.372282, 0.207658, 0.681281)
