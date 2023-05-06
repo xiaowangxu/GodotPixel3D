@@ -1,0 +1,149 @@
+[gd_scene load_steps=14 format=3 uid="uid://dab2dypm0nd5u"]
+
+[ext_resource type="PackedScene" uid="uid://y0hjhyb4rxjb" path="res://node_3d.tscn" id="1_jibll"]
+[ext_resource type="Script" path="res://ColorRect.gd" id="2_pvlvg"]
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_uxqr2"]
+input_name = "texture"
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_6b3ep"]
+input_name = "texture_pixel_size"
+
+[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_4jk5y"]
+default_input_values = [0, Vector2(1, 1), 1, Vector2(0, 0)]
+op_type = 0
+operator = 3
+
+[sub_resource type="VisualShaderNodeTexture" id="VisualShaderNodeTexture_0a8gr"]
+source = 5
+
+[sub_resource type="VisualShaderNodeVec2Parameter" id="VisualShaderNodeVec2Parameter_n46w5"]
+parameter_name = "Shift"
+
+[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_tstf8"]
+default_input_values = [0, Vector2(1, 1), 1, Vector2(0, 0)]
+op_type = 0
+operator = 3
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_a1tc6"]
+input_name = "uv"
+
+[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_tcvav"]
+default_input_values = [0, Vector2(1, 1), 1, Vector2(0, 0)]
+op_type = 0
+
+[sub_resource type="VisualShader" id="VisualShader_smajs"]
+code = "shader_type canvas_item;
+uniform vec2 Shift;
+
+
+
+void fragment() {
+// Vector2Parameter:6
+	vec2 n_out6p0 = Shift;
+
+
+// Input:12
+	vec2 n_out12p0 = TEXTURE_PIXEL_SIZE;
+
+
+// VectorOp:13
+	vec2 n_in13p0 = vec2(1.00000, 1.00000);
+	vec2 n_out13p0 = n_in13p0 / n_out12p0;
+
+
+// VectorOp:7
+	vec2 n_out7p0 = n_out6p0 / n_out13p0;
+
+
+// Input:8
+	vec2 n_out8p0 = UV;
+
+
+// VectorOp:9
+	vec2 n_out9p0 = n_out7p0 + n_out8p0;
+
+
+	vec4 n_out3p0;
+// Texture2D:3
+	n_out3p0 = texture(TEXTURE, n_out9p0);
+
+
+// Output:0
+	COLOR.rgb = vec3(n_out3p0.xyz);
+
+
+}
+"
+graph_offset = Vector2(-98.6724, -285.842)
+mode = 1
+flags/light_only = false
+nodes/fragment/0/position = Vector2(760, 140)
+nodes/fragment/3/node = SubResource("VisualShaderNodeTexture_0a8gr")
+nodes/fragment/3/position = Vector2(420, 20)
+nodes/fragment/6/node = SubResource("VisualShaderNodeVec2Parameter_n46w5")
+nodes/fragment/6/position = Vector2(-740, -340)
+nodes/fragment/7/node = SubResource("VisualShaderNodeVectorOp_tstf8")
+nodes/fragment/7/position = Vector2(-220, -200)
+nodes/fragment/8/node = SubResource("VisualShaderNodeInput_a1tc6")
+nodes/fragment/8/position = Vector2(-300, 20)
+nodes/fragment/9/node = SubResource("VisualShaderNodeVectorOp_tcvav")
+nodes/fragment/9/position = Vector2(160, -80)
+nodes/fragment/11/node = SubResource("VisualShaderNodeInput_uxqr2")
+nodes/fragment/11/position = Vector2(-160, 180)
+nodes/fragment/12/node = SubResource("VisualShaderNodeInput_6b3ep")
+nodes/fragment/12/position = Vector2(-1260, -20)
+nodes/fragment/13/node = SubResource("VisualShaderNodeVectorOp_4jk5y")
+nodes/fragment/13/position = Vector2(-800, -140)
+nodes/fragment/connections = PackedInt32Array(3, 0, 0, 0, 6, 0, 7, 0, 7, 0, 9, 0, 8, 0, 9, 1, 9, 0, 3, 0, 11, 0, 3, 2, 12, 0, 13, 1, 13, 0, 7, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_u22a6"]
+resource_local_to_scene = true
+shader = SubResource("VisualShader_smajs")
+shader_parameter/Shift = Vector2(0, 0)
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_vo0ev"]
+viewport_path = NodePath("SubViewportContainer/SubViewport")
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+stretch_shrink = 5
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+handle_input_locally = false
+size = Vector2i(230, 129)
+render_target_update_mode = 4
+
+[node name="Node3D" parent="SubViewportContainer/SubViewport" instance=ExtResource("1_jibll")]
+
+[node name="ColorRect" type="TextureRect" parent="."]
+texture_filter = 1
+texture_repeat = 1
+material = SubResource("ShaderMaterial_u22a6")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("ViewportTexture_vo0ev")
+script = ExtResource("2_pvlvg")
+
+[connection signal="shift" from="SubViewportContainer/SubViewport/Node3D/Camera3D" to="ColorRect" method="_on_camera_3d_shift"]
+
+[editable path="SubViewportContainer/SubViewport/Node3D"]

@@ -1,0 +1,324 @@
+[gd_scene load_steps=19 format=3 uid="uid://bic3l1fa2c3vu"]
+
+[ext_resource type="ArrayMesh" uid="uid://bx815fetj3kgo" path="res://Monkey.obj" id="1_st7cm"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_6cgi7"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s36p4"]
+albedo_color = Color(0.0431373, 0.443137, 0.321569, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_agy43"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fi61v"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="Animation" id="Animation_hun0y"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0.102257, 0.270854, -0.0545185)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1.37982, 3.03384, 2.02146)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0.377528, 0.377528, 0.377528)]
+}
+
+[sub_resource type="Animation" id="Animation_1qti3"]
+resource_name = "new_animation"
+length = 5.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0.102257, 0.270854, -0.0545185), Vector3(0.0556224, 0.510203, -0.510567)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 2.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(1.37982, 3.03384, 2.02146), Vector3(0.522732, -2.08594, -0.0107982)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 2.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0.308782, 0.308782, 0.308781), Vector3(0.377528, 0.377528, 0.377528)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_e3l2h"]
+_data = {
+"RESET": SubResource("Animation_hun0y"),
+"new_animation": SubResource("Animation_1qti3")
+}
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ol187"]
+albedo_color = Color(0.458824, 0.584314, 0.188235, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_86mrh"]
+albedo_color = Color(0.0117647, 0.14902, 0, 1)
+
+[sub_resource type="Shader" id="Shader_80ubl"]
+code = "shader_type spatial;
+
+//render_mode ambient_light_disabled;
+
+uniform vec4 albedo : source_color = vec4(1.0f);
+uniform sampler2D albedo_texture : source_color;
+uniform bool clamp_diffuse_to_max = false;
+
+uniform int cuts : hint_range(1, 8) = 3;
+uniform float wrap : hint_range(-2.0f, 2.0f) = 0.0f;
+uniform float steepness : hint_range(1.0f, 8.0f) = 1.0f;
+
+uniform bool use_attenuation = true;
+
+uniform bool use_specular = true;
+uniform float specular_strength : hint_range(0.0f, 1.0f) = 1.0f;
+uniform float specular_shininess : hint_range(0.0f, 32.0f) = 16.0f;
+uniform sampler2D specular_map : source_color;
+
+uniform bool use_rim = true;
+uniform float rim_width : hint_range(0.0f, 16.0f) = 8.0f;
+uniform vec4 rim_color : source_color = vec4(1.0f);
+
+uniform bool use_ramp = false;
+uniform sampler2D ramp : source_color;
+
+uniform bool use_borders = false;
+uniform float border_width = 0.01f;
+
+varying vec3 vertex_pos;
+varying vec3 normal;
+
+float split_specular(float specular) {
+	return step(0.5f, specular);
+}
+
+void vertex() {
+	vertex_pos = VERTEX;
+	normal = NORMAL;
+}
+
+void fragment() {
+	ALBEDO = albedo.rgb * texture(albedo_texture, UV).rgb;
+}
+
+void light() {
+	// Attenuation.
+	float attenuation = 1.0f;
+	if (use_attenuation) {
+		attenuation = ATTENUATION;
+	}
+	
+	// Diffuse lighting.
+	float NdotL = dot(NORMAL, LIGHT);
+	float diffuse_amount = NdotL + (attenuation - 1.0) + wrap;
+	//float diffuse_amount = NdotL * attenuation + wrap;
+	diffuse_amount *= steepness;
+	float cuts_inv = 1.0f / float(cuts);
+	float diffuse_stepped = clamp(diffuse_amount + mod(1.0f - diffuse_amount, cuts_inv), 0.0f, 1.0f);
+
+	// Calculate borders.
+	float border = 0.0f;
+	if (use_borders) {
+		float corr_border_width = length(cross(NORMAL, LIGHT)) * border_width * steepness;
+		border = step(diffuse_stepped - corr_border_width, diffuse_amount)
+				 - step(1.0 - corr_border_width, diffuse_amount);
+	}
+	
+	// Apply diffuse result to different styles.
+	vec3 diffuse = ALBEDO.rgb * LIGHT_COLOR / PI;
+	if (use_ramp) {
+		diffuse *= texture(ramp, vec2(diffuse_stepped * (1.0f - border), 0.0f)).rgb;
+	} else {
+		diffuse *= diffuse_stepped * (1.0f - border);
+	}
+	
+	if (clamp_diffuse_to_max) {
+		// Clamp diffuse to max for multiple light sources.
+		DIFFUSE_LIGHT = max(DIFFUSE_LIGHT, diffuse);
+	} else {
+		DIFFUSE_LIGHT += diffuse;
+	}
+	
+	// Specular lighting.
+	if (use_specular) {
+		vec3 H = normalize(LIGHT + VIEW);
+		float NdotH = dot(NORMAL, H);
+		float specular_amount = max(pow(NdotH, specular_shininess*specular_shininess), 0.0f)
+							    * texture(specular_map, UV).r
+								* attenuation;
+		specular_amount = split_specular(specular_amount);
+		SPECULAR_LIGHT += specular_strength * specular_amount * LIGHT_COLOR;
+	}
+	
+	// Simple rim lighting.
+	if (use_rim) {
+		float NdotV = dot(NORMAL, VIEW);
+		float rim_light = pow(1.0 - NdotV, rim_width);
+		DIFFUSE_LIGHT += rim_light * rim_color.rgb * rim_color.a * LIGHT_COLOR / PI;
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mbh7h"]
+render_priority = 0
+shader = SubResource("Shader_80ubl")
+shader_parameter/albedo = Color(1, 0.721569, 0, 1)
+shader_parameter/clamp_diffuse_to_max = false
+shader_parameter/cuts = 3
+shader_parameter/wrap = 0.0
+shader_parameter/steepness = 1.0
+shader_parameter/use_attenuation = true
+shader_parameter/use_specular = true
+shader_parameter/specular_strength = 1.0
+shader_parameter/specular_shininess = 16.0
+shader_parameter/use_rim = true
+shader_parameter/rim_width = 8.0
+shader_parameter/rim_color = Color(1, 1, 1, 1)
+shader_parameter/use_ramp = false
+shader_parameter/use_borders = false
+shader_parameter/border_width = 0.01
+
+[sub_resource type="PrismMesh" id="PrismMesh_7yqyk"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j16gv"]
+albedo_color = Color(0, 0, 1, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_qdtqc"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lwgik"]
+albedo_color = Color(0, 0.615686, 0, 1)
+
+[sub_resource type="TextMesh" id="TextMesh_mc6dr"]
+text = "Hello  World"
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_46wnp"]
+diffuse_mode = 3
+specular_mode = 1
+metallic = 1.0
+metallic_specular = 0.09
+roughness = 0.0
+
+[node name="Node3D" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_6cgi7")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_s36p4")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.199366, 0.320501, 0.00770678, 0.0645066, -0.0312131, -0.370664, -0.314037, 0.197059, -0.0712458, 0.102257, 0.270854, -0.0545185)
+mesh = SubResource("BoxMesh_agy43")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_fi61v")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="MeshInstance3D2"]
+autoplay = "new_animation"
+libraries = {
+"": SubResource("AnimationLibrary_e3l2h")
+}
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.0849147, 0, -0.0528157, 0, 0.1, 0, 0.0528157, 0, 0.0849147, 0.314699, 0.201981, 0.767988)
+mesh = SubResource("BoxMesh_agy43")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_ol187")
+
+[node name="MeshInstance3D7" type="MeshInstance3D" parent="MeshInstance3D6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+mesh = SubResource("BoxMesh_agy43")
+skeleton = NodePath("../../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_86mrh")
+
+[node name="MeshInstance3D8" type="MeshInstance3D" parent="MeshInstance3D6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+mesh = SubResource("BoxMesh_agy43")
+skeleton = NodePath("../../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_86mrh")
+
+[node name="MeshInstance3D9" type="MeshInstance3D" parent="MeshInstance3D6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -1)
+mesh = SubResource("BoxMesh_agy43")
+skeleton = NodePath("../../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_ol187")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.269328, 0.0167888, 0.153004, -0.0966773, 0.258396, 0.141825, -0.119773, -0.170818, 0.229576, -0.484369, 0.129358, -0.493181)
+mesh = ExtResource("1_st7cm")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("ShaderMaterial_mbh7h")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.22163, 0, 0.0316769, 0, 0.223883, 0, -0.0316769, 0, 0.22163, 0.710795, 0.365672, 0.0754488)
+mesh = SubResource("PrismMesh_7yqyk")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_j16gv")
+
+[node name="MeshInstance3D7" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.307902, 0, 0.0440075, 0, 0.311032, 0, -0.0440075, 0, 0.307902, -0.612656, 0.056973, 0.270202)
+mesh = SubResource("SphereMesh_qdtqc")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_lwgik")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.963574, -0.26744, 0, 0.152444, 0.549248, 0.821637, -0.219739, -0.791708, 0.570011, -0.372282, 0.207658, 0.681281)
+mesh = SubResource("TextMesh_mc6dr")
+surface_material_override/0 = SubResource("StandardMaterial3D_46wnp")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(0.955541, 0, 0.294858, 0, 1, 0, -0.294858, 0, 0.955541, 0.054668, 0.286011, 0.614286)
+visible = false
+omni_range = 0.758
+
+[node name="SpotLight3D" type="SpotLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.844935, 0.534869, 0, -0.534869, 0.844935, 0.0745054, 0.329819, 0.298756)
+visible = false
+spot_range = 12.692
+spot_angle = 51.89
