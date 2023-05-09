@@ -144,6 +144,6 @@ grow_vertical = 2
 texture = SubResource("ViewportTexture_vo0ev")
 script = ExtResource("2_pvlvg")
 
-[connection signal="shift" from="SubViewportContainer/SubViewport/Node3D/Camera3D" to="ColorRect" method="_on_camera_3d_shift"]
+[connection signal="shift" from="SubViewportContainer/SubViewport/Node3D/Node3D" to="ColorRect" method="_on_camera_3d_shift"]
 
 [editable path="SubViewportContainer/SubViewport/Node3D"]
