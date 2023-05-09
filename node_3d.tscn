@@ -35,10 +35,10 @@ tracks/0/path = NodePath("Node3D:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 5),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0, 5, 6.4, 8.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
-"values": [Vector3(-0.0560494, 1.44594, 1.91397), Vector3(0.207478, 2.02465, 1.91397)]
+"values": [Vector3(-0.0560494, 1.44594, 1.91397), Vector3(0.207478, 2.02465, 1.91397), Vector3(0.794791, 0.524874, -0.009547), Vector3(0.794791, 1.56981, -1.41089)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -47,10 +47,10 @@ tracks/1/path = NodePath("Node3D:rotation")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 2, 3, 6),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
+"times": PackedFloat32Array(0, 2, 3, 6, 7, 9.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [Vector3(0.942478, 0, 0), Vector3(0.942478, 0, 0), Vector3(0.896235, 0.56804, 0.134722), Vector3(0.896235, 0.56804, 0.134722)]
+"values": [Vector3(0.942478, 0, 0), Vector3(0.942478, 0, 0), Vector3(0.896235, 0.56804, 0.134722), Vector3(0.896235, 0.56804, 0.134722), Vector3(0.907796, 2.29587, 0.101042), Vector3(0.907796, 2.29587, 0.101042)]
 }
 
 [sub_resource type="Animation" id="Animation_cl622"]
