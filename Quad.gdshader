@@ -57,7 +57,7 @@ float normalEdgeIndicator() {
     indicator += neighborNormalEdgeIndicator(0, 1, depth, normal);
     indicator += neighborNormalEdgeIndicator(-1, 0, depth, normal);
     indicator += neighborNormalEdgeIndicator(1, 0, depth, normal);
-    return step(0.1, indicator);
+    return step(0.4, indicator);
 }
 float lum(vec4 color) {
     vec4 weights = vec4(.2126, .7152, .0722, .0);
@@ -82,6 +82,6 @@ void fragment() {
 
     float coefficient = dei > 0.0 ? (1.0 - depthEdgeCoefficient * dei) : (1.0 + normalEdgeCoefficient * nei);
 
-    ALBEDO = texel.rgb * coefficient; //vec3(1.0 - (1.0 - depthEdgeCoefficient * dei), 0.0, 0.0);
+    ALBEDO = vec3( dei, 0.0, nei);//texel.rgb * coefficient; //vec3(1.0 - (1.0 - depthEdgeCoefficient * dei), 0.0, 0.0);
 }
 

@@ -269,25 +269,25 @@ libraries = {
 }
 
 [node name="MeshInstance3D6" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.0849147, 0, -0.0528157, 0, 0.1, 0, 0.0528157, 0, 0.0849147, 0.314699, 0.201981, 0.767988)
+transform = Transform3D(0.0849147, 0, -0.0528157, 0, 0.1, 0, 0.0528157, 0, 0.0849147, 0.314699, 0.0451823, 0.767988)
 mesh = SubResource("BoxMesh_agy43")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_ol187")
 
 [node name="MeshInstance3D7" type="MeshInstance3D" parent="MeshInstance3D6"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+transform = Transform3D(1, 0, -5.96046e-08, 0, 1, 0, 5.96046e-08, 0, 1, 1, -0.687893, 0)
 mesh = SubResource("BoxMesh_agy43")
 skeleton = NodePath("../../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_86mrh")
 
 [node name="MeshInstance3D8" type="MeshInstance3D" parent="MeshInstance3D6"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+transform = Transform3D(1, 0, -5.96046e-08, 0, 1, 0, 5.96046e-08, 0, 1, 0, -0.176981, -1)
 mesh = SubResource("BoxMesh_agy43")
 skeleton = NodePath("../../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_86mrh")
 
 [node name="MeshInstance3D9" type="MeshInstance3D" parent="MeshInstance3D6"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -1)
+transform = Transform3D(1, 0, -5.96046e-08, 0, 1, 0, 5.96046e-08, 0, 1, 1, -0.432342, -1)
 mesh = SubResource("BoxMesh_agy43")
 skeleton = NodePath("../../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_ol187")
@@ -305,7 +305,7 @@ skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_j16gv")
 
 [node name="MeshInstance3D7" type="MeshInstance3D" parent="."]
-transform = Transform3D(0.307902, 0, 0.0440075, 0, 0.311032, 0, -0.0440075, 0, 0.307902, -0.612656, 0.056973, 0.270202)
+transform = Transform3D(0.307902, 0, 0.0440075, 0, 0.311032, 0, -0.0440075, 0, 0.307902, -0.682482, 0.0625906, 0.139434)
 mesh = SubResource("SphereMesh_qdtqc")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_rmpab")
